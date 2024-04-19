@@ -1,0 +1,8 @@
+
+aiohttp
+python-multipart
+requests
+fastapi
+uvicorn[standard]
+databases
+databases[aiosqlite]
