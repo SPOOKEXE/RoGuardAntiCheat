@@ -3,14 +3,15 @@
 
 User Data:
 - UserId : number
-- RegisteredGames : dict[str, *RegisteredGameData*]
+- Registered Games : dict[str, *Registered Game Data*.UUID]
 
-RegisteredGameData:
-- Game Name : string
-- PlaceId : number
-- UniverseId : number
+Registered Game Data:
+- UUID : string
+- Place Id : number
+- Creator Id : number
+- Creator Type : string
+- *UNIQUE_SALT_KEY* : string = "".join([uuid4().hex for _ in range(2)])
 - Timestamp : number
-- *UniqueSaltKey* : string
 
 ## ANTI-CHEAT INFORMATION (non-account specific)
 
@@ -18,33 +19,34 @@ Player Information:
 - (PRIMARY) UserId : number
 - Unique User Names
 - Unique Display Names
-- Related Game UUIDs : list[*Game Information*.UUID]
 
 Game Information:
 - (PRIMARY) UUID : string
 - Game Name : string
 - PlaceId : number
-- UniverseId : number
 - CreatorId : number
 - CreatorType : string
-- CreatedTimestamp : number
+- RegisteredTimestamp : number
 
-Gamme Server Information:
+Game Server Information:
 - (PRIMARY) UUID : string
-- *Game UUID* : string
+- *Game Information*.UUID : string
 - JobId : string
 - Timestamp : number
 - Duration : number
 - Tracked Players Ids : list[*Player Information*.UserId]
 
-Character Information:
+Unique Character Information:
 - (PRIMARY) UUID : string
+- *Game Server Information*.UUID : string
 - UserId : number
 - Timestamp : number
-- CharacterTracker : list[*Character Data*.UUID]
+- FrameLogs : list[*Character Frame Log*.UUID]
+- Tags : dict[str, Any]
 
-Character Data:
+Character Frame Log:
 - (PRIMARY) UUID : string
+- *Unique Character Information*.UUID : string
 - Timestamp : number
 - BoundsPosition : *Positional Data*
 - BoundsSize (u16, 2^14 = 16,384, 1 bit sign, 1 bit 'out of bounds' flag.)
@@ -52,6 +54,7 @@ Character Data:
 - Humanoid Properties dict[str, Value / Full Enum Path]
 - Character Events : list[*Character Event Item*]
 - Custom Events : list[*Custom Event Item*]
+- Tags : dict[str, Any]
 
 Positional Data:
 - Position                 (u16, 2^14 = 16,384, 1 bit sign, 1 bit 'out of bounds' flag.)
@@ -85,6 +88,17 @@ Other Information:
 
 Authentication:
 - API Header Cookie is the following:
-i. sha256(PLACE_ID .. OWNER_ID .. UNIQUE_SALT_KEY) where UNIQUE_SALT_KEY is given to the user when they register the game.
+i. sha256(PLACE_ID .. CREATOR_ID .. UNIQUE_SALT_KEY) where UNIQUE_SALT_KEY is given to the user when they register the game.
 ii. If mismatch, ignore the data.
 iii. Have a test to check whether the it will be registered as valid.
+
+Database:
+- shared into multiple tables:
+	i. registered users (backend)
+	ii. registered games (backend)
+	iii. roblox players (A.C.)
+	iv. roblox places (A.C.)
+	v. registered servers (A.C.)
+	vi. players in servers (A.C.)
+	vii. spawned character (A.C.)
+	iix. character logging frames (A.C.)
