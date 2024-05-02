@@ -19,6 +19,7 @@ Player Information:
 - (PRIMARY) UserId : number
 - Unique User Names
 - Unique Display Names
+- Associated Games : list[*Game Information*.PlaceId]
 
 Game Information:
 - (PRIMARY) UUID : string
@@ -27,6 +28,7 @@ Game Information:
 - CreatorId : number
 - CreatorType : string
 - RegisteredTimestamp : number
+- Every Tracked Players : list[*Player Information*.UserId]
 
 Game Server Information:
 - (PRIMARY) UUID : string
