@@ -1,48 +1,48 @@
 
 Game Information:
-- UUID
-- Game Name
-- PlaceId
-- UniverseId
-- Timestamp
+- UUID : string
+- Game Name : string
+- PlaceId : number
+- UniverseId : number
+- Timestamp : number
 
 Server Information:
-- Game Info UUID
-- JobId
-- Date
-- Duration
+- Game Information UUID : string
+- JobId : string
+- Timestamp : number
+- Duration : number
 
 Player Information:
 - Unique User Names
 - Unique Display Names
 - User Ids
-- Character Data
+- *Character Information*
 
 Character Information:
-- UUID
-- Timestamp
+- UUID : string
+- Timestamp : number
 - Tracker : dict[str, Character Data]
 
 Character Data:
-- Timestamp
-- BoundsCFrame
+- Timestamp : number
+- BoundsPosition : *Positional Data*
 - BoundsSize (u16, 2^14 = 16,384, 1 bit sign, 1 bit 'out of bounds' flag.)
-- BasePartCFrames : dict[str, CFrame Data] -- Character.Head, Character.Torso, Character.Accessory.Handle, etc
-- Humanoid Properties
-- Character Events : list[Character Event Item]
-- Custom Events : list[Custom Event Item]
+- BasePartCFrames : dict[str, *Positional Data*] -- Character.Head, Character.Torso, Character.Accessory.Handle, etc
+- Humanoid Properties dict[str, Value / Full Enum Path]
+- Character Events : list[*Character Event Item*]
+- Custom Events : list[*Custom Event Item*]
 
-CFrame Data:
+Positional Data:
 - Position                 (u16, 2^14 = 16,384, 1 bit sign, 1 bit 'out of bounds' flag.)
 - Stepped Horziontal Angle (u8, 2 bits each quad deep)
 - Stepped Vertical Angle   (u8, 2 bits each quad deep)
 
 Character Event Item:
-- Event Type (Descendant Added, Descendant Removed, Humanoid Property Changed)
-- Timestamp
+- Event Type (Descendant Added, Descendant Removed, Humanoid Property Changed, BasePart Property Changed)
+- Timestamp : number
 - Duration
 
 Custom Event Item:
 - Event Type (Fire Bullet, Grapple Wall, Teleported, etc)
-- Timestamp
-- Duration
+- Timestamp : number
+- Duration : number
