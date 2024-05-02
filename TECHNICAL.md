@@ -1,29 +1,50 @@
 
-Game Information:
-- UUID : string
+## BACKEND-INFORMATION (account specific)
+
+User Data:
+- UserId : number
+- RegisteredGames : dict[str, *RegisteredGameData*]
+
+RegisteredGameData:
 - Game Name : string
 - PlaceId : number
 - UniverseId : number
 - Timestamp : number
+- *UniqueSaltKey* : string
 
-Server Information:
-- Game Information UUID : string
+## ANTI-CHEAT INFORMATION (non-account specific)
+
+Player Information:
+- (PRIMARY) UserId : number
+- Unique User Names
+- Unique Display Names
+- Related Game UUIDs : list[*Game Information*.UUID]
+
+Game Information:
+- (PRIMARY) UUID : string
+- Game Name : string
+- PlaceId : number
+- UniverseId : number
+- CreatorId : number
+- CreatorType : string
+- CreatedTimestamp : number
+
+Gamme Server Information:
+- (PRIMARY) UUID : string
+- *Game UUID* : string
 - JobId : string
 - Timestamp : number
 - Duration : number
-
-Player Information:
-- Unique User Names
-- Unique Display Names
-- User Ids
-- *Character Information*
+- Tracked Players Ids : list[*Player Information*.UserId]
 
 Character Information:
-- UUID : string
+- (PRIMARY) UUID : string
+- UserId : number
 - Timestamp : number
-- Tracker : dict[str, Character Data]
+- CharacterTracker : list[*Character Data*.UUID]
 
 Character Data:
+- (PRIMARY) UUID : string
 - Timestamp : number
 - BoundsPosition : *Positional Data*
 - BoundsSize (u16, 2^14 = 16,384, 1 bit sign, 1 bit 'out of bounds' flag.)
@@ -46,3 +67,24 @@ Custom Event Item:
 - Event Type (Fire Bullet, Grapple Wall, Teleported, etc)
 - Timestamp : number
 - Duration : number
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+
+Deffered and Immediate Database Logging:
+- FPS Games should send log data when the rounds end.
+- Other games can queue the data and send during a set interval.
+
+Other Information:
+- JSON Encode the data and compress with zlib before sending over wire.
+
+Authentication:
+- API Header Cookie is the following:
+i. sha256(PLACE_ID .. OWNER_ID .. UNIQUE_SALT_KEY) where UNIQUE_SALT_KEY is given to the user when they register the game.
+ii. If mismatch, ignore the data.
+iii. Have a test to check whether the it will be registered as valid.
