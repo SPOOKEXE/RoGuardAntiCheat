@@ -7,13 +7,6 @@
 
 ]]
 
---[[
-
-	TODO:
-	- convert cframes to Position XYZ + horizontal/vertical angles ( 12 values -> 5 values)
-
-]]
-
 local Configuration = {
 	AntiCheatBackendURL = "http://127.0.0.1:5000",
 	AntiCheatAPIKey = "123123123",
@@ -68,7 +61,6 @@ export type LiveUniqueCharacter = {
 }
 
 export type CharacterFrame = {
-	UUID : string,
 	UCUUID : string,
 	Timestamp : number,
 	BoundsCFrame : CFrame,
@@ -171,32 +163,21 @@ local function ArrayJoin(sep : string, array : {any}) : string
 	return value
 end
 
-local function ConvertCFrameToXZYAnglePair( cf : CFrame ) : ( number, number, number, number, number )
-	local lookVector = cf.LookVector
-	local upVector = cf.UpVector
-	-- get the horizontal plane angle
-	local hAngle = math.atan2(Vector3.xAxis:Dot(lookVector), Vector3.zAxis:Dot(lookVector))
-	-- get the vertical plane angle
-	local vAngle = math.atan2(lookVector.Y, upVector.Y) + math.pi
-	vAngle = (vAngle + math.pi) % (math.pi * 2)
-	-- return the values
-	local x, y, z = cf.Position.X, cf.Position.Y, cf.Position.Z
-	return x,y,z,hAngle,vAngle
-end
-
 local function SerializeDeepTableValues( value : any ) : any
 	if typeof(value) == 'Vector3' then
 		local arrayForm = RoundArrayNumbers({'V3', value.X, value.Y, value.Z}, 1)
 		return ArrayJoin("|", arrayForm)
 	elseif typeof(value) == 'CFrame' then
-		-- X, Y, Z, LookX, LookY, LookZ, RightX, RightY, RightZ, UpX, UpY, UpZ
-		local x,y,z,hA,vA = ConvertCFrameToXZYAnglePair( value )
-		x = RoundNumber(x, 1)
-		y = RoundNumber(x, 1)
-		z = RoundNumber(x, 1)
-		hA = RoundNumber(hA, 3)
-		vA = RoundNumber(vA, 3)
-		local arrayForm = {'CF',x,y,z,hA,vA}
+		-- X, Y, Z, LookXYZ, RightXYZ, UpXYZ
+		local aX,aY,aZ = value:ToEulerAnglesXYZ()
+		local x = RoundNumber(value.X, 1)
+		local y = RoundNumber(value.Y, 1)
+		local z = RoundNumber(value.Z, 1)
+		-- X, Y, Z, yaw, roll, pitch
+		aX = RoundNumber(aX, 3)
+		aY = RoundNumber(aY, 3)
+		aZ = RoundNumber(aZ, 3)
+		local arrayForm = {'CF',x,y,z,aX,aY,aZ}
 		return ArrayJoin("|", arrayForm)
 	elseif typeof(value) == 'EnumItem' then
 		local encoded = tostring(value)
@@ -424,7 +405,6 @@ function Module.CreateCharacterFrame( uniqueCharacter : LiveUniqueCharacter ) : 
 	local customTags = { }
 
 	local CharacterFrame : CharacterFrame = {
-		UUID = GenerateUUID(),
 		UCUUID = uniqueCharacter.UUID,
 		Timestamp = tick(),
 		BoundsCFrame = boundsCFrame,
@@ -455,7 +435,6 @@ function Module._SendCachedToDatabase() : boolean
 end
 
 function Module.StartSystemLoop()
-
 	-- loop until backend is available
 	local isAvailable = Module.IsBackendAvailable()
 
@@ -543,26 +522,22 @@ function Module.Init(_)
 
 	-- Module.SetDeferredState( Configuration.UpdatesDeferred )
 
-	task.delay(3, function()
+	task.delay(2, function()
 		local player = Players:GetPlayers()[1]
 		local character = player.Character
-		local frames = {}
-		for _ = 1, 100 do
-			local frame = Module.CreateCharacterFrame({
-				UUID = 'totally_unique',
-				humanoid = character.Humanoid,
-				character = character,
-				player = player,
-			})
-			table.insert(frames, frame)
-			task.wait(0.05)
-		end
-		frames = SerializeDeepTableValues(frames)
-		frames = HttpService:JSONEncode(frames)
-		print('encoded', #frames)
-		frames = ApplySpecialMappingToString( frames )
-		frames = zlibModule.Zlib.Compress(frames, {level = 6})
-		print('compressed', #frames)
+		local frame = Module.CreateCharacterFrame({
+			UUID = 'totally_unique',
+			humanoid = character.Humanoid,
+			character = character,
+			player = player,
+		})
+		frame = SerializeDeepTableValues(frame)
+		frame = HttpService:JSONEncode(frame)
+		print('encoded', #frame)
+		print(frame)
+		frame = ApplySpecialMappingToString( frame )
+		frame = zlibModule.Zlib.Compress(frame, {level = 6})
+		print('compressed', #frame)
 	end)
 
 end
