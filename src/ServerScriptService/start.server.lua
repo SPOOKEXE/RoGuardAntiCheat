@@ -1,5 +1,5 @@
 local ServerStorage = game:GetService("ServerStorage")
 
-local AntiCheatModule = require(ServerStorage:WaitForChild('RoGuardAC'))
+local AntiCheatModule = require(ServerStorage:WaitForChild('RoGuard'))
 AntiCheatModule.Init({})
 AntiCheatModule.Start()

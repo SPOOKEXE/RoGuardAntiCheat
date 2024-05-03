@@ -2,7 +2,9 @@
 ## BACKEND-INFORMATION (account specific)
 
 User Data:
-- UserId : number
+- AccountUUID : string
+- Roblox UserIds : { number }
+- Roblox Groups : { number }
 - Registered Games : dict[str, *Registered Game Data*.UUID]
 
 Registered Game Data:
@@ -20,6 +22,7 @@ Player Information:
 - Unique User Names
 - Unique Display Names
 - Associated Games : list[*Game Information*.PlaceId]
+- Cheated Games : list[*Game Information*.PlaceId]
 
 Game Information:
 - (PRIMARY) UUID : string
@@ -29,6 +32,7 @@ Game Information:
 - CreatorType : string
 - RegisteredTimestamp : number
 - Every Tracked Players : list[*Player Information*.UserId]
+- Detected Cheats : list[{ *Player Information*.UserId, Timestamp }]
 
 Game Server Information:
 - (PRIMARY) UUID : string
@@ -62,17 +66,13 @@ Character Frame Log:
 Positional Data:
 - Position                 (u16, 2^14 = 16,384, 1 bit sign, 1 bit 'out of bounds' flag.)
 - Stepped Horziontal Angle (u8, 2 bits each quad deep)
-- Stepped Vertical Angle   (u8, 2 bits each quad deep)
+- Stepped Vertical Angle  (u8, 2 bits each quad deep)
 
 Character Event Item:
-- Event Type (Descendant Added, Descendant Removed, Humanoid Property Changed, BasePart Property Changed)
-- Timestamp : number
-- Duration
-
-Custom Event Item:
-- Event Type (Fire Bullet, Grapple Wall, Teleported, etc)
+- Event Type (Descendant Added/Removed, Humanoid Property Changed, Fire Bullet, Grapple Wall, Teleported, etc)
 - Timestamp : number
 - Duration : number
+- Parameters : list[any]
 
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ Other Information:
 
 Authentication:
 - API Header Cookie is the following:
-i. sha256(PLACE_ID .. CREATOR_ID .. UNIQUE_SALT_KEY) where UNIQUE_SALT_KEY is given to the user when they register the game.
+i. sha256(CREATOR_ID .. UNIQUE_SALT_KEY) where UNIQUE_SALT_KEY is given to the user when they register the game.
 ii. If mismatch, ignore the data.
 iii. Have a test to check whether the it will be registered as valid.
 
