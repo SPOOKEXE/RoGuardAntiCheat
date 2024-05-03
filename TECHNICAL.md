@@ -104,3 +104,12 @@ Database:
 	vi. players in servers (A.C.)
 	vii. spawned character (A.C.)
 	iix. character logging frames (A.C.)
+
+## Testing Game
+
+Give a widget that allows for users to:
+- enable fly
+- enable no-clip
+- enable teleporting
+- enable ESP
+- enable "event/tag" tracker (so you know if they're simulating commands or cheating)
