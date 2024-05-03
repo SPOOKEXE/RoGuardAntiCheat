@@ -1,0 +1,7 @@
+{
+	"discord.enabled": true,
+	"robloxLsp.diagnostics.globals": [
+		"SkateboardPlatform",
+		"ServerInfoUUID"
+	]
+}

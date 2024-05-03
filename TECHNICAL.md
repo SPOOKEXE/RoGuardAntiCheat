@@ -34,6 +34,7 @@ Game Server Information:
 - (PRIMARY) UUID : string
 - *Game Information*.UUID : string
 - JobId : string
+- Server Version : number
 - Timestamp : number
 - Duration : number
 - Tracked Players Ids : list[*Player Information*.UserId]
