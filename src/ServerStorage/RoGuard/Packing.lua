@@ -18,8 +18,6 @@ function Module.PackCharacterFrame( frame : CharacterFrame )
 	local b = buffer.fromstring("asdas")
 	print(buffer.tostring(b))
 
-
-
 end
 
 return Module
