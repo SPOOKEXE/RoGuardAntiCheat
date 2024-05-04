@@ -23,7 +23,7 @@ Bounds Size:
 - Z (bounds -128>128, 1 sign 7 data bits = 8 bits)
 = 24 bits per bounds size
 
-**104 bits for bounds position and size**
+**= 78 + 24 = 104 bits for bounds cframe and size**
 
 Velocity Vectors:
 - X (bounds -128>128, 1 sign 7 data bits = 8 bits)
@@ -32,15 +32,15 @@ Velocity Vectors:
 = 24 bits per velocity value
 
 Positional Data:
-- X (bounds -2048>2048, 11 bits, 1 sign bit = 12 bits)
-- Y (bounds -2048>2048, 11 bits, 1 sign bit = 12 bits)
-- Z (bounds -2048>2048, 11 bits, 1 sign bit = 12 bits)
-- Yaw Angle (0 - 8192, 13 bits)
-- Roll Angle (0 - 8192, 13 bits)
-- Pitch Angle (0 - 8192, 13 bits)
-= 75 bits (10 bytes) per positional data
+- X (-2048>2048, 1 sign 12 data bits = 13 bits)
+- Y (-2048>2048, 1 sign 12 data bits = 13 bits)
+- Z (-2048>2048, 1 sign 12 data bits = 13 bits)
+- Roll (0 - ~6300, unsigned 13 bits)
+- Yaw (0 - ~6300, unsigned 13 bits)
+- Pitch (0 - ~6300, unsigned 13 bits)
+= 78 bits per bounds size - 80 bits total, 2 spare
 
-= 102 bits + (99 bits per positional) [huge reduction in bit count]
+**= 24 + 78 = 104 bits per body part**
 
 ## Special Encoding of Data using a map?
 
